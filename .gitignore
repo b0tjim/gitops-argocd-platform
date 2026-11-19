@@ -1,0 +1,14 @@
+# Rendered manifests and Helm downloads
+charts/
+*.tgz
+rendered/
+
+# Secrets: only SealedSecret manifests are committed, never the plain ones
+.env
+*.unsealed.yaml
+*.kubeconfig
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

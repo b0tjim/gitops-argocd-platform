@@ -7,8 +7,8 @@ local kind cluster, so it needs no cloud account.
 
 Each step is small and should leave `main` green.
 
-- [ ] 1. Repo scaffolding: README stub, MIT LICENSE, .gitignore, .editorconfig.
-- [ ] 2. Directory layout: `bootstrap/`, `apps/`, `platform/`, `workloads/` with a short README in each explaining its role.
+- [x] 1. Repo scaffolding: README stub, MIT LICENSE, .gitignore, .editorconfig.
+- [x] 2. Directory layout: `bootstrap/`, `apps/`, `platform/`, `workloads/` with a short README in each explaining its role.
 - [ ] 3. `kind/cluster.yaml` and a Makefile with `cluster-up` / `cluster-down` targets.
 - [ ] 4. `bootstrap/argocd/` Kustomization that installs a pinned ArgoCD release from the upstream manifest.
 - [ ] 5. Makefile `argocd-install` and `argocd-password` targets, plus port-forward instructions.

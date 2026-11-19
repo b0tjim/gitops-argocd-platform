@@ -9,7 +9,7 @@ Each step is small and should leave `main` green.
 
 - [x] 1. Repo scaffolding: README stub, MIT LICENSE, .gitignore, .editorconfig.
 - [x] 2. Directory layout: `bootstrap/`, `apps/`, `platform/`, `workloads/` with a short README in each explaining its role.
-- [ ] 3. `kind/cluster.yaml` and a Makefile with `cluster-up` / `cluster-down` targets.
+- [x] 3. `kind/cluster.yaml` and a Makefile with `cluster-up` / `cluster-down` targets.
 - [ ] 4. `bootstrap/argocd/` Kustomization that installs a pinned ArgoCD release from the upstream manifest.
 - [ ] 5. Makefile `argocd-install` and `argocd-password` targets, plus port-forward instructions.
 - [ ] 6. ArgoCD `AppProject` (`bakery`) restricting source repos and destination namespaces.

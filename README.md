@@ -17,6 +17,15 @@ Work in progress — see [ROADMAP.md](ROADMAP.md).
 | `platform/`  | Cluster add-ons (Sealed Secrets, kube-prometheus-stack). |
 | `workloads/` | The bakery app: Kustomize base plus dev/prod overlays. |
 
+## Local cluster
+
+Needs [kind](https://kind.sigs.k8s.io/), Docker and kubectl.
+
+```bash
+make cluster-up     # single-node kind cluster named bakery-gitops
+make cluster-down   # delete it
+```
+
 ## License
 
 MIT

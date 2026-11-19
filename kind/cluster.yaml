@@ -1,0 +1,7 @@
+# Single-node kind cluster for the GitOps platform.
+# ArgoCD and the apps are reached with `kubectl port-forward`, so no port mappings are needed.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: bakery-gitops
+nodes:
+  - role: control-plane

@@ -1,0 +1,8 @@
+# Installs a pinned ArgoCD release from the upstream manifest.
+# Bump the version in the URL to upgrade; never point at "stable".
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+resources:
+  - namespace.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.8/manifests/install.yaml

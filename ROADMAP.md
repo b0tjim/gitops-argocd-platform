@@ -12,7 +12,7 @@ Each step is small and should leave `main` green.
 - [x] 3. `kind/cluster.yaml` and a Makefile with `cluster-up` / `cluster-down` targets.
 - [x] 4. `bootstrap/argocd/` Kustomization that installs a pinned ArgoCD release from the upstream manifest.
 - [x] 5. Makefile `argocd-install` and `argocd-password` targets, plus port-forward instructions.
-- [ ] 6. ArgoCD `AppProject` (`bakery`) restricting source repos and destination namespaces.
+- [x] 6. ArgoCD `AppProject` (`bakery`) (`bootstrap/projects/bakery.yaml`) restricting source repos and destination namespaces.
 - [ ] 7. Root app-of-apps `Application` (`bootstrap/root-app.yaml`) pointing at `apps/`.
 - [ ] 8. `platform/sealed-secrets` Application (pinned Helm chart) in the `kube-system` namespace.
 - [ ] 9. `platform/kube-prometheus-stack` Application (pinned chart, slim values reused from k8s-observability-lab).

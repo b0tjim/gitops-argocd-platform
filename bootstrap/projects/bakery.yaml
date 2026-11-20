@@ -1,0 +1,31 @@
+# The one ArgoCD project every bakery Application belongs to. It limits where
+# manifests may come from and which namespaces they may land in, so a typo in
+# an Application can't deploy something unexpected to the wrong place.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: bakery
+  namespace: argocd
+spec:
+  description: Dang Good Pies platform and workloads
+  sourceRepos:
+    - https://github.com/b0tjim/gitops-argocd-platform.git
+    - https://github.com/b0tjim/k8s-observability-lab.git
+    - https://bitnami-labs.github.io/sealed-secrets
+    - https://prometheus-community.github.io/helm-charts
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: argocd # child Application manifests created by the root app
+    - server: https://kubernetes.default.svc
+      namespace: kube-system # sealed-secrets controller
+    - server: https://kubernetes.default.svc
+      namespace: monitoring
+    - server: https://kubernetes.default.svc
+      namespace: bakery-dev
+    - server: https://kubernetes.default.svc
+      namespace: bakery-prod
+  # The add-on charts ship CRDs, ClusterRoles and webhooks, so cluster-scoped
+  # kinds must be allowed; the namespace list above is the real guard rail.
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"

@@ -26,6 +26,17 @@ make cluster-up     # single-node kind cluster named bakery-gitops
 make cluster-down   # delete it
 ```
 
+## ArgoCD
+
+```bash
+make argocd-install   # pinned ArgoCD v3.5.8 into the argocd namespace
+make argocd-password  # initial admin password
+kubectl -n argocd port-forward svc/argocd-server 8080:443
+```
+
+Then open <https://localhost:8080> (self-signed cert, so accept the browser
+warning) and log in as `admin` with the printed password.
+
 ## License
 
 MIT

@@ -1,0 +1,57 @@
+# kube-prometheus-stack: Prometheus + Grafana for the bakery workloads.
+# Same pinned chart version and slim values as b0tjim/k8s-observability-lab
+# (monitoring/values.yaml), inlined here so ArgoCD needs only one source.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: bakery
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 93.3.0
+    helm:
+      valuesObject:
+        # Pick up ServiceMonitors from any release, not only this chart's own.
+        prometheus:
+          prometheusSpec:
+            serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
+            ruleSelectorNilUsesHelmValues: false
+            retention: 2d
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+        grafana:
+          # Local-only placeholder password; never reuse outside kind.
+          adminPassword: admin
+          # The app chart ships its dashboard as a ConfigMap in its own namespace.
+          sidecar:
+            dashboards:
+              searchNamespaces: ALL
+        # Keep it light: no Alertmanager (alerts still show in Prometheus).
+        alertmanager:
+          enabled: false
+        # kind's control-plane components only listen on localhost; skip them.
+        kubeEtcd:
+          enabled: false
+        kubeControllerManager:
+          enabled: false
+        kubeScheduler:
+          enabled: false
+        kubeProxy:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # The Prometheus CRDs exceed the 256 KiB annotation limit of client-side apply.
+      - ServerSideApply=true

@@ -15,7 +15,7 @@ Each step is small and should leave `main` green.
 - [x] 6. ArgoCD `AppProject` (`bakery`) (`bootstrap/projects/bakery.yaml`) restricting source repos and destination namespaces.
 - [x] 7. Root app-of-apps `Application` (`bootstrap/root-app.yaml`) pointing at `apps/`.
 - [x] 8. Sealed Secrets platform Application (`apps/sealed-secrets.yaml`, pinned Helm chart) in the `kube-system` namespace.
-- [ ] 9. `platform/kube-prometheus-stack` Application (pinned chart, slim values reused from k8s-observability-lab).
+- [x] 9. kube-prometheus-stack Application (`apps/kube-prometheus-stack.yaml`, pinned chart, slim values reused from k8s-observability-lab).
 - [ ] 10. `workloads/bakery-orders-api/base`: Kustomization that renders the Helm chart from k8s-observability-lab via `helmCharts`.
 - [ ] 11. `overlays/dev`: one replica, `bakery-dev` namespace, debug log level.
 - [ ] 12. `overlays/prod`: two replicas, resource limits, `bakery-prod` namespace, PodDisruptionBudget.

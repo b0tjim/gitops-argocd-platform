@@ -1,6 +1,6 @@
 CLUSTER_NAME ?= bakery-gitops
 
-.PHONY: help cluster-up cluster-down argocd-install argocd-password
+.PHONY: help cluster-up cluster-down argocd-install argocd-password root-app
 
 help: ## List the available targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -18,3 +18,6 @@ argocd-install: ## Install the pinned ArgoCD release and wait for it to be ready
 
 argocd-password: ## Print the initial ArgoCD admin password
 	@kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d; echo
+
+root-app: ## Apply the root app-of-apps Application
+	kubectl apply -f bootstrap/root-app.yaml

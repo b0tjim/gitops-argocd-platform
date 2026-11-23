@@ -1,0 +1,23 @@
+# The root "app-of-apps": ArgoCD syncs every Application manifest in apps/,
+# and each of those in turn deploys one component. Applied once by hand
+# (make root-app); after that, adding a file under apps/ is a git commit.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: bakery
+  source:
+    repoURL: https://github.com/b0tjim/gitops-argocd-platform.git
+    targetRevision: main
+    path: apps
+    directory:
+      include: "*.yaml"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true # removing a file from apps/ removes that component
+      selfHeal: true

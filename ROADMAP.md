@@ -13,7 +13,7 @@ Each step is small and should leave `main` green.
 - [x] 4. `bootstrap/argocd/` Kustomization that installs a pinned ArgoCD release from the upstream manifest.
 - [x] 5. Makefile `argocd-install` and `argocd-password` targets, plus port-forward instructions.
 - [x] 6. ArgoCD `AppProject` (`bakery`) (`bootstrap/projects/bakery.yaml`) restricting source repos and destination namespaces.
-- [ ] 7. Root app-of-apps `Application` (`bootstrap/root-app.yaml`) pointing at `apps/`.
+- [x] 7. Root app-of-apps `Application` (`bootstrap/root-app.yaml`) pointing at `apps/`.
 - [ ] 8. `platform/sealed-secrets` Application (pinned Helm chart) in the `kube-system` namespace.
 - [ ] 9. `platform/kube-prometheus-stack` Application (pinned chart, slim values reused from k8s-observability-lab).
 - [ ] 10. `workloads/bakery-orders-api/base`: Kustomization that renders the Helm chart from k8s-observability-lab via `helmCharts`.

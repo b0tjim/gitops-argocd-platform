@@ -1,0 +1,32 @@
+# Prod environment: two replicas with explicit resource limits and a
+# PodDisruptionBudget, in its own namespace.
+# Render with `kustomize build --enable-helm workloads/bakery-orders-api/overlays/prod`.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: bakery-prod
+
+resources:
+  - namespace.yaml
+  - ../../base
+  - pdb.yaml
+
+replicas:
+  - name: bakery-orders-api
+    count: 2
+
+patches:
+  # Replace the chart's default resources with prod-sized requests and limits.
+  - target:
+      kind: Deployment
+      name: bakery-orders-api
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi

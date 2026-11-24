@@ -1,0 +1,26 @@
+# Dev environment: one replica in its own namespace, with debug logging.
+# Render with `kustomize build --enable-helm workloads/bakery-orders-api/overlays/dev`.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: bakery-dev
+
+resources:
+  - namespace.yaml
+  - ../../base
+
+replicas:
+  - name: bakery-orders-api
+    count: 1
+
+patches:
+  # The image runs the uvicorn CLI, which reads UVICORN_* env vars as flags.
+  - target:
+      kind: Deployment
+      name: bakery-orders-api
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: UVICORN_LOG_LEVEL
+          value: debug

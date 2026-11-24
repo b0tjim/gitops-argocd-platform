@@ -1,0 +1,22 @@
+# Base for bakery-orders-api: renders the Helm chart with Kustomize so the
+# dev/prod overlays can patch the output. Needs `kustomize build --enable-helm`.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Vendored copy of charts/bakery-orders-api from b0tjim/k8s-observability-lab
+# (commit 0594355). The chart isn't published to a Helm repo, and ArgoCD can
+# only render local charts with helmCharts, so a copy lives here. To update it,
+# re-copy the chart directory and bump the commit above.
+helmGlobals:
+  chartHome: charts
+
+helmCharts:
+  - name: bakery-orders-api
+    releaseName: bakery-orders-api
+    valuesInline:
+      metrics:
+        # kube-prometheus-stack (apps/) provides the CRDs, so turn on scraping and alerts.
+        serviceMonitor:
+          enabled: true
+        prometheusRule:
+          enabled: true

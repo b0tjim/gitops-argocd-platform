@@ -1,0 +1,50 @@
+# Default values for bakery-orders-api.
+
+image:
+  repository: ghcr.io/b0tjim/bakery-orders-api
+  # Defaults to the chart's appVersion when empty.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+service:
+  port: 8000
+
+metrics:
+  serviceMonitor:
+    # Off by default: the ServiceMonitor CRD only exists once kube-prometheus-stack is installed.
+    enabled: false
+    interval: 15s
+  prometheusRule:
+    # Alerts (app down, high 5xx rate). Also needs kube-prometheus-stack's CRDs, so off by default.
+    enabled: false
+  dashboard:
+    # A plain ConfigMap, harmless without Grafana; the sidecar picks it up when the monitoring stack runs.
+    enabled: true
+
+# Override the generated resource names if needed.
+nameOverride: ""
+fullnameOverride: ""
+
+# In-chart PostgreSQL for local dev only. For real environments, point the app at a managed database instead.
+postgresql:
+  image: postgres:16-alpine
+  user: bakery
+  database: bakery
+  # Placeholder for local kind clusters; override with --set postgresql.password=... anywhere else.
+  password: change-me
+  storage: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 256Mi

@@ -1,5 +1,7 @@
 # Rendered manifests and Helm downloads
 charts/
+# ...except the vendored app chart (see workloads/bakery-orders-api/base)
+!workloads/bakery-orders-api/base/charts/
 *.tgz
 rendered/
 

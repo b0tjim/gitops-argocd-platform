@@ -1,0 +1,20 @@
+# bakery-orders-api in dev: tracks main and syncs automatically, and self-heal
+# reverts any manual kubectl change, so the cluster always matches git.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bakery-orders-api-dev
+  namespace: argocd
+spec:
+  project: bakery
+  source:
+    repoURL: https://github.com/b0tjim/gitops-argocd-platform.git
+    targetRevision: main
+    path: workloads/bakery-orders-api/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bakery-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

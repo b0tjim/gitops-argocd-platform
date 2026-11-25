@@ -1,0 +1,8 @@
+# The workload base renders a Helm chart through kustomize's helmCharts field,
+# which only works when ArgoCD passes --enable-helm to kustomize build.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  kustomize.buildOptions: --enable-helm

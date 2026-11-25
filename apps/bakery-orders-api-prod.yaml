@@ -1,0 +1,16 @@
+# bakery-orders-api in prod: no automated sync. ArgoCD shows when prod is
+# OutOfSync with git, and a person clicks Sync (or runs `argocd app sync`).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bakery-orders-api-prod
+  namespace: argocd
+spec:
+  project: bakery
+  source:
+    repoURL: https://github.com/b0tjim/gitops-argocd-platform.git
+    targetRevision: main
+    path: workloads/bakery-orders-api/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bakery-prod

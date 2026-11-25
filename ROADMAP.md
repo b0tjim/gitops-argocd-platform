@@ -19,7 +19,7 @@ Each step is small and should leave `main` green.
 - [x] 10. `workloads/bakery-orders-api/base`: Kustomization that renders a vendored copy of the k8s-observability-lab Helm chart via `helmCharts` (the chart is not published to a Helm repo).
 - [x] 11. `overlays/dev`: one replica, `bakery-dev` namespace, debug log level.
 - [x] 12. `overlays/prod`: two replicas, resource limits, `bakery-prod` namespace, PodDisruptionBudget.
-- [ ] 13. Child Applications for dev (auto-sync + self-heal) and prod (manual sync) under `apps/`; enable `--enable-helm` in ArgoCD's `kustomize.buildOptions`.
+- [x] 13. Child Applications for dev (auto-sync + self-heal) and prod (manual sync) under `apps/`; enable `--enable-helm` in ArgoCD's `kustomize.buildOptions`.
 - [ ] 14. Sealed Secrets workflow: `scripts/seal-db-secret.sh` using `kubeseal`, `.env.example`, docs on why only the sealed file is committed.
 - [ ] 15. Wire the sealed DB secret into the dev and prod overlays.
 - [ ] 16. CI: yamllint and `kustomize build --enable-helm` for every overlay on every push.

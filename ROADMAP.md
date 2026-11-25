@@ -20,7 +20,7 @@ Each step is small and should leave `main` green.
 - [x] 11. `overlays/dev`: one replica, `bakery-dev` namespace, debug log level.
 - [x] 12. `overlays/prod`: two replicas, resource limits, `bakery-prod` namespace, PodDisruptionBudget.
 - [x] 13. Child Applications for dev (auto-sync + self-heal) and prod (manual sync) under `apps/`; enable `--enable-helm` in ArgoCD's `kustomize.buildOptions`.
-- [ ] 14. Sealed Secrets workflow: `scripts/seal-db-secret.sh` using `kubeseal`, `.env.example`, docs on why only the sealed file is committed.
+- [x] 14. Sealed Secrets workflow: `scripts/seal-db-secret.sh` using `kubeseal`, `.env.example`, docs on why only the sealed file is committed.
 - [ ] 15. Wire the sealed DB secret into the dev and prod overlays.
 - [ ] 16. CI: yamllint and `kustomize build --enable-helm` for every overlay on every push.
 - [ ] 17. CI: kubeconform schema validation of rendered manifests (with CRD schemas for ArgoCD).

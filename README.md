@@ -37,6 +37,29 @@ kubectl -n argocd port-forward svc/argocd-server 8080:443
 Then open <https://localhost:8080> (self-signed cert, so accept the browser
 warning) and log in as `admin` with the printed password.
 
+## Secrets
+
+The database password is managed with
+[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets). The controller
+(installed by `apps/sealed-secrets.yaml`) holds a private key that never leaves
+the cluster; anyone can encrypt with its public key, but only the controller can
+decrypt. So the encrypted `SealedSecret` is safe to commit, and the plain Secret
+never is (`.env` and `*.unsealed.yaml` are git-ignored).
+
+Needs [kubeseal](https://github.com/bitnami-labs/sealed-secrets#kubeseal) and the
+controller running in the cluster.
+
+```bash
+cp .env.example .env              # then set a real POSTGRES_PASSWORD
+scripts/seal-db-secret.sh dev     # writes overlays/dev/postgresql-sealedsecret.yaml
+scripts/seal-db-secret.sh prod    # same for prod
+```
+
+A SealedSecret is bound to its name and namespace, so each environment gets its
+own. Re-run the script after rotating the password, or after recreating the
+cluster (a new controller has a new key). To seal without cluster access, pass
+the public cert: `SEALED_SECRETS_CERT=cert.pem scripts/seal-db-secret.sh dev`.
+
 ## License
 
 MIT

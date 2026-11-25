@@ -9,6 +9,8 @@ namespace: bakery-prod
 resources:
   - namespace.yaml
   - ../../base
+  # DB credentials, encrypted for this namespace (scripts/seal-db-secret.sh).
+  - postgresql-sealedsecret.yaml
   - pdb.yaml
 
 replicas:
@@ -16,6 +18,16 @@ replicas:
     count: 2
 
 patches:
+  # Drop the chart's plain Secret; the controller creates it from the SealedSecret.
+  - target:
+      kind: Secret
+      name: bakery-orders-api-postgresql
+    patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: bakery-orders-api-postgresql
   # Replace the chart's default resources with prod-sized requests and limits.
   - target:
       kind: Deployment

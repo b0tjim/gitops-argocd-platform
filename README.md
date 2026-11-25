@@ -60,6 +60,12 @@ own. Re-run the script after rotating the password, or after recreating the
 cluster (a new controller has a new key). To seal without cluster access, pass
 the public cert: `SEALED_SECRETS_CERT=cert.pem scripts/seal-db-secret.sh dev`.
 
+Each overlay lists its `postgresql-sealedsecret.yaml` as a resource and deletes
+the chart's plain Secret, so the only Secret in the cluster is the one the
+controller decrypts. The committed files hold the `.env.example` placeholders
+sealed with a throwaway cert, so they only show the shape: on your cluster,
+re-run the script for each environment before syncing.
+
 ## License
 
 MIT

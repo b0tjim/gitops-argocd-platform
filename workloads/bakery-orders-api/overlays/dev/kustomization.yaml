@@ -8,12 +8,24 @@ namespace: bakery-dev
 resources:
   - namespace.yaml
   - ../../base
+  # DB credentials, encrypted for this namespace (scripts/seal-db-secret.sh).
+  - postgresql-sealedsecret.yaml
 
 replicas:
   - name: bakery-orders-api
     count: 1
 
 patches:
+  # Drop the chart's plain Secret; the controller creates it from the SealedSecret.
+  - target:
+      kind: Secret
+      name: bakery-orders-api-postgresql
+    patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: bakery-orders-api-postgresql
   # The image runs the uvicorn CLI, which reads UVICORN_* env vars as flags.
   - target:
       kind: Deployment

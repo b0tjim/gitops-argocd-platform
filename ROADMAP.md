@@ -23,7 +23,7 @@ Each step is small and should leave `main` green.
 - [x] 14. Sealed Secrets workflow: `scripts/seal-db-secret.sh` using `kubeseal`, `.env.example`, docs on why only the sealed file is committed.
 - [x] 15. Wire the sealed DB secret into the dev and prod overlays.
 - [x] 16. CI: yamllint and `kustomize build --enable-helm` for every overlay on every push.
-- [ ] 17. CI: kubeconform schema validation of rendered manifests (with CRD schemas for ArgoCD).
+- [x] 17. CI: kubeconform schema validation of rendered manifests (with CRD schemas for ArgoCD).
 - [ ] 18. CI: spin up kind, install ArgoCD, apply the root app and wait until the dev app is Synced/Healthy.
 - [ ] 19. Dependabot for GitHub Actions; pin action versions.
 - [ ] 20. Promotion doc: how a new image tag moves from dev to prod (PR that bumps the tag in the prod overlay).

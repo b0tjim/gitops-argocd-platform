@@ -41,7 +41,9 @@ cert_args=()
 # Values are JSON-quoted (valid YAML) so passwords with special characters survive.
 q() { printf '"%s"' "$(printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g')"; }
 
-kubeseal --format yaml --namespace "$namespace" "${cert_args[@]}" > "$out" <<YAML
+# kubeseal emits `creationTimestamp: null`, which the SealedSecret schema rejects.
+kubeseal --format yaml --namespace "$namespace" "${cert_args[@]}" <<YAML \
+  | sed "/creationTimestamp: null/d" > "$out"
 apiVersion: v1
 kind: Secret
 metadata:

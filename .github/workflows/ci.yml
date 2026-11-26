@@ -23,7 +23,11 @@ jobs:
       KUSTOMIZE_VERSION: "5.4.3"
     steps:
       - uses: actions/checkout@v4
-      # The runner image ships Helm, which kustomize calls for --enable-helm.
+      # kustomize shells out to Helm for --enable-helm. Pin Helm 3: the runner's
+      # default Helm 4 drops the `helm version -c` flag kustomize 5.4 uses.
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.16.2
       - name: Install kustomize
         run: |
           base=https://github.com/kubernetes-sigs/kustomize/releases/download

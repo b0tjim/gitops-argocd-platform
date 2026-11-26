@@ -127,6 +127,8 @@ jobs:
         if: failure()
         run: |
           kubectl -n argocd get applications -o wide || true
+          kubectl -n argocd get applications \
+            -o custom-columns='NAME:.metadata.name,CONDITIONS:.status.conditions[*].message' || true
           kubectl -n argocd get application bakery-orders-api-dev -o yaml || true
           kubectl get pods -A || true
           kubectl -n bakery-dev describe pods || true

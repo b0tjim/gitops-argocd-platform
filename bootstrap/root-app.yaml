@@ -19,5 +19,5 @@ spec:
     namespace: argocd
   syncPolicy:
     automated:
-      prune: true # removing a file from apps/ removes that component
+      prune: true  # removing a file from apps/ removes that component
       selfHeal: true

@@ -1,0 +1,16 @@
+---
+extends: default
+
+# Vendored Helm templates contain Go templating, which isn't plain YAML.
+ignore: |
+  workloads/bakery-orders-api/base/charts/
+
+rules:
+  document-start: disable
+  line-length:
+    max: 120
+    # Sealed Secret ciphertext is one long base64 string per key.
+    ignore: |
+      *sealedsecret.yaml
+  truthy:
+    check-keys: false  # GitHub Actions uses a bare `on:` key

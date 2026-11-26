@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: yamllint
+        run: |
+          pip install --quiet yamllint
+          yamllint --strict .
+
+  render:
+    runs-on: ubuntu-latest
+    env:
+      KUSTOMIZE_VERSION: "5.4.3"
+    steps:
+      - uses: actions/checkout@v4
+      # The runner image ships Helm, which kustomize calls for --enable-helm.
+      - name: Install kustomize
+        run: |
+          base=https://github.com/kubernetes-sigs/kustomize/releases/download
+          v=$KUSTOMIZE_VERSION
+          curl -sSL "$base/kustomize%2Fv$v/kustomize_v${v}_linux_amd64.tar.gz" \
+            | sudo tar xz -C /usr/local/bin kustomize
+      - name: kustomize build every overlay
+        run: |
+          for dir in bootstrap/argocd workloads/bakery-orders-api/overlays/*/; do
+            echo "::group::$dir"
+            kustomize build --enable-helm "$dir" > /dev/null
+            echo "::endgroup::"
+          done

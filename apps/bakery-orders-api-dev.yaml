@@ -18,3 +18,11 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    # The first sync can run before kube-prometheus-stack has installed the
+    # ServiceMonitor/PrometheusRule CRDs; retry instead of staying failed.
+    retry:
+      limit: 10
+      backoff:
+        duration: 15s
+        factor: 2
+        maxDuration: 3m

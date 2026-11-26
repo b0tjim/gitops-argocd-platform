@@ -79,3 +79,54 @@ jobs:
           kubeconform -strict -summary \
             -schema-location default -schema-location "$CRD_SCHEMAS" \
             apps/*.yaml bootstrap/root-app.yaml bootstrap/projects/
+
+  e2e:
+    # ArgoCD syncs from main on GitHub, so this only means something for main.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [render, kubeconform]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: bakery-gitops
+          config: kind/cluster.yaml
+      # No v0.1.0 image is published to GHCR yet, so build the app from source
+      # under the tag the chart expects (appVersion) and side-load it into kind.
+      - name: Build and load the bakery-orders-api image
+        env:
+          IMAGE: ghcr.io/b0tjim/bakery-orders-api:0.1.0
+        run: |
+          docker build -t "$IMAGE" https://github.com/b0tjim/bakery-orders-api.git#main
+          kind load docker-image "$IMAGE" --name bakery-gitops
+      # The committed SealedSecret is sealed with a throwaway cert this fresh
+      # controller can't decrypt, so CI provides the plain DB Secret itself.
+      - name: Create a CI-only DB Secret
+        run: |
+          kubectl create namespace bakery-dev
+          kubectl -n bakery-dev create secret generic bakery-orders-api-postgresql \
+            --from-literal=POSTGRES_USER=bakery \
+            --from-literal=POSTGRES_PASSWORD=ci-only \
+            --from-literal=POSTGRES_DB=bakery \
+            --from-literal=DATABASE_URL=postgresql+psycopg://bakery:ci-only@bakery-orders-api-postgresql:5432/bakery
+      - name: Install ArgoCD and apply the root app
+        run: |
+          make argocd-install
+          make root-app
+      - name: Wait for the dev app to be Synced and its Deployment ready
+        run: |
+          timeout 300 bash -c \
+            'until kubectl -n argocd get application bakery-orders-api-dev 2>/dev/null; do sleep 5; done'
+          kubectl -n argocd wait application/bakery-orders-api-dev \
+            --for=jsonpath='{.status.sync.status}'=Synced --timeout=600s
+          kubectl -n bakery-dev rollout status deployment/bakery-orders-api --timeout=300s
+          kubectl -n argocd get applications
+      - name: Show cluster state on failure
+        if: failure()
+        run: |
+          kubectl -n argocd get applications -o wide || true
+          kubectl -n argocd get application bakery-orders-api-dev -o yaml || true
+          kubectl get pods -A || true
+          kubectl -n bakery-dev describe pods || true

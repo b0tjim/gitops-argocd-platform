@@ -66,6 +66,16 @@ controller decrypts. The committed files hold the `.env.example` placeholders
 sealed with a throwaway cert, so they only show the shape: on your cluster,
 re-run the script for each environment before syncing.
 
+## CI
+
+Every push runs yamllint, `kustomize build --enable-helm` and kubeconform. On
+`main`, an end-to-end job also creates a kind cluster, builds the app image from
+source, installs ArgoCD, applies the root app and waits until
+`bakery-orders-api-dev` is Synced and its Deployment is ready. The committed
+SealedSecret can't be decrypted by that fresh controller (it was sealed with a
+throwaway cert), so the job creates a CI-only plain DB Secret first; the
+SealedSecret shows as Degraded there, which is expected.
+
 ## License
 
 MIT

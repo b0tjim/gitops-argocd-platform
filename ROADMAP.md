@@ -24,7 +24,7 @@ Each step is small and should leave `main` green.
 - [x] 15. Wire the sealed DB secret into the dev and prod overlays.
 - [x] 16. CI: yamllint and `kustomize build --enable-helm` for every overlay on every push.
 - [x] 17. CI: kubeconform schema validation of rendered manifests (with CRD schemas for ArgoCD).
-- [ ] 18. CI: spin up kind, install ArgoCD, apply the root app and wait until the dev app is Synced/Healthy.
+- [x] 18. CI: spin up kind, install ArgoCD, apply the root app and wait until the dev app is Synced and its Deployment is ready (CI supplies a plain DB Secret, since the committed SealedSecret uses a throwaway cert).
 - [ ] 19. Dependabot for GitHub Actions; pin action versions.
 - [ ] 20. Promotion doc: how a new image tag moves from dev to prod (PR that bumps the tag in the prod overlay).
 - [ ] 21. README: Mermaid architecture diagram, what it demonstrates, how to run it, CI badge.

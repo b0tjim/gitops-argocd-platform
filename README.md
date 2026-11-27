@@ -1,12 +1,74 @@
 # gitops-argocd-platform
 
+[![CI](https://github.com/b0tjim/gitops-argocd-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/b0tjim/gitops-argocd-platform/actions/workflows/ci.yml)
+[![ArgoCD](https://img.shields.io/badge/argocd-v3.5.8-EF7B4D.svg)](bootstrap/argocd/kustomization.yaml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 GitOps platform for the Dang Good Pies projects: an ArgoCD app-of-apps with
 Kustomize dev/prod overlays and Sealed Secrets, deploying
 [bakery-orders-api](https://github.com/b0tjim/bakery-orders-api) (via the Helm
 chart in [k8s-observability-lab](https://github.com/b0tjim/k8s-observability-lab))
 to a local kind cluster.
 
-Work in progress — see [ROADMAP.md](ROADMAP.md).
+Built step by step; see [ROADMAP.md](ROADMAP.md) for the history.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  dev["Developer"] -->|git push / PR| repo[("GitHub repo<br/>gitops-argocd-platform")]
+  subgraph kind["kind cluster (bakery-gitops)"]
+    subgraph argocd["namespace: argocd"]
+      root["root app-of-apps<br/>(watches apps/)"]
+      ss_app["sealed-secrets app"]
+      kps_app["kube-prometheus-stack app"]
+      dev_app["bakery-orders-api-dev<br/>auto-sync + self-heal"]
+      prod_app["bakery-orders-api-prod<br/>manual sync"]
+      root --> ss_app & kps_app & dev_app & prod_app
+    end
+    ss["Sealed Secrets controller<br/>(kube-system)"]
+    kps["Prometheus + Grafana<br/>(monitoring)"]
+    devns["bakery-dev<br/>1 replica + PostgreSQL"]
+    prodns["bakery-prod<br/>2 replicas, limits, PDB"]
+    ss_app --> ss
+    kps_app --> kps
+    dev_app -->|overlays/dev| devns
+    prod_app -->|overlays/prod| prodns
+    ss -. decrypts SealedSecret .-> devns & prodns
+    kps -. scrapes /metrics .-> devns & prodns
+  end
+  repo -->|polled by ArgoCD| root
+```
+
+## What it demonstrates
+
+- **GitOps with ArgoCD**: the cluster state is whatever is on `main`; a
+  root app-of-apps fans out to one `Application` per component.
+- **Kustomize overlays** over a vendored Helm chart (`helmCharts` +
+  `--enable-helm`), so dev and prod differ only in small, reviewable patches.
+- **Safe secret handling**: only encrypted `SealedSecret`s are committed.
+- **Promotion by pull request**: dev auto-syncs, prod needs a manual sync.
+- **CI that proves it works**: lint, render, schema-validate, then a real
+  kind + ArgoCD end-to-end sync on every push to `main`.
+
+## Quick start
+
+Needs Docker, [kind](https://kind.sigs.k8s.io/), kubectl and
+[kubeseal](https://github.com/bitnami-labs/sealed-secrets#kubeseal).
+
+```bash
+make cluster-up       # 1. local cluster
+make argocd-install   # 2. ArgoCD + the bakery AppProject
+make root-app         # 3. ArgoCD installs everything else from apps/
+```
+
+Then re-seal the DB secret for your cluster (see [Secrets](#secrets)) and push
+it. The apps sync from this repo's `main`, so to run your own copy, fork it and
+point the `repoURL`s in `apps/` and `bootstrap/` at the fork. Watch the apps go green in the ArgoCD UI (see [ArgoCD](#argocd)).
+The overlays pull `ghcr.io/b0tjim/bakery-orders-api:0.1.0`; if that image isn't
+published yet, build it from the
+[bakery-orders-api](https://github.com/b0tjim/bakery-orders-api) repo under
+that tag and `kind load docker-image` it, as CI does.
 
 ## Layout
 

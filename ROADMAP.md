@@ -26,6 +26,6 @@ Each step is small and should leave `main` green.
 - [x] 17. CI: kubeconform schema validation of rendered manifests (with CRD schemas for ArgoCD).
 - [x] 18. CI: spin up kind, install ArgoCD, apply the root app and wait until the dev app is Synced and its Deployment is ready (CI supplies a plain DB Secret, since the committed SealedSecret uses a throwaway cert).
 - [x] 19. Dependabot for GitHub Actions; pin action versions.
-- [ ] 20. Promotion doc: how a new image tag moves from dev to prod (PR that bumps the tag in the prod overlay).
+- [x] 20. Promotion doc: how a new image tag moves from dev to prod (PR that bumps the tag in the prod overlay).
 - [ ] 21. README: Mermaid architecture diagram, what it demonstrates, how to run it, CI badge.
 - [ ] 22. Polish and release: tidy docs, annotated `v0.1.0` tag (verify via the Actions run for the tag).

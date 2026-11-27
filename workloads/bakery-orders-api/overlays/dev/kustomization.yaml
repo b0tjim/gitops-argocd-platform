@@ -11,6 +11,12 @@ resources:
   # DB credentials, encrypted for this namespace (scripts/seal-db-secret.sh).
   - postgresql-sealedsecret.yaml
 
+# The image tag this environment runs. Promotion = a PR that changes newTag
+# (see docs/promotion.md).
+images:
+  - name: ghcr.io/b0tjim/bakery-orders-api
+    newTag: "0.1.0"
+
 replicas:
   - name: bakery-orders-api
     count: 1

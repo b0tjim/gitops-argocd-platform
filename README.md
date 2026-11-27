@@ -66,6 +66,12 @@ controller decrypts. The committed files hold the `.env.example` placeholders
 sealed with a throwaway cert, so they only show the shape: on your cluster,
 re-run the script for each environment before syncing.
 
+## Promoting a release
+
+Each overlay pins its image tag with Kustomize `images:`. A new version moves
+dev → prod through two small PRs that bump `newTag`: dev auto-syncs, prod waits
+for a manual sync. Full steps and rollback: [docs/promotion.md](docs/promotion.md).
+
 ## CI
 
 Every push runs yamllint, `kustomize build --enable-helm` and kubeconform. On
